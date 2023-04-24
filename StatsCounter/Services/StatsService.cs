@@ -1,10 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using StatsCounter.Models;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Text;
 
 namespace StatsCounter.Services

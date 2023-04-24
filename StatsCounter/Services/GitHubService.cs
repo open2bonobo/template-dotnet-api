@@ -38,8 +38,7 @@ namespace StatsCounter.Services
                 return output;
             }
             catch (HttpRequestException ex)
-            {
-               
+            {               
                 Console.WriteLine($"HTTP request failed: {ex.Message}");
             }
             catch (JsonException ex)
