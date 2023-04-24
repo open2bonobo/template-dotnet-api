@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using StatsCounter.Models;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace StatsCounter.Services
@@ -24,12 +25,11 @@ namespace StatsCounter.Services
 
             throw new NotImplementedException(); // TODO: add your code here
         }
-        private IDictionary<char, int> CountLetters(IEnumerable<RepositoryDto> repositories)
+        private IDictionary<char, int> CountLetters(RepositoryInfo repository)
 {
     var letters = new Dictionary<char, int>();
 
-    foreach (var repository in repositories)
-    {
+    
         foreach (var letter in repository.Name.ToLower().Where(char.IsLetter))
         {
             if (letters.ContainsKey(letter))
@@ -41,7 +41,7 @@ namespace StatsCounter.Services
                 letters[letter] = 1;
             }
         }
-    }
+    
 
     return letters;
 }
