@@ -1,7 +1,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using StartupExtensions;
-
+using StatsCounter.Services.GitHubService;
 namespace StatsCounter.Extensions
 {
     public static class StartupExtensions
@@ -10,7 +9,7 @@ namespace StatsCounter.Extensions
             this IServiceCollection services,
             Uri baseApiUrl)
         {
-            services.AddTransient<IGitHubService>();
+            services.AddService<IGitHubService>().AsTransient();
             return services; // TODO: add your code here
         }
     }
