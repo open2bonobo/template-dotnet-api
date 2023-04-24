@@ -20,7 +20,7 @@ namespace StatsCounter.Services
             _httpClient = httpClient;
         }
 
-        public Task<IEnumerable<RepositoryInfo>> GetRepositoryInfosByOwnerAsync(string owner)
+        public async Task<IEnumerable<RepositoryInfo>> GetRepositoryInfosByOwnerAsync(string owner)
         {
             using var httpClient = new HttpClient();
 httpClient.DefaultRequestHeaders.Add("User-Agent", "MyApp"); 
