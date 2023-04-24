@@ -23,9 +23,8 @@ namespace StatsCounter.Services
         public Task<IEnumerable<RepositoryInfo>> GetRepositoryInfosByOwnerAsync(string owner)
         {
             using var httpClient = new HttpClient();
-httpClient.DefaultRequestHeaders.Add("User-Agent", "MyApp"); // Replace with your app name
+httpClient.DefaultRequestHeaders.Add("User-Agent", "MyApp"); 
 
-var owner = "open2bonobo";
 var repo = "docs";
 
 var response = await httpClient.GetAsync($"https://api.github.com/repos/{owner}/{repo}");
