@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using StatsCounter.Services.GitHubService;
+using StatsCounter.Services;
+
 namespace StatsCounter.Extensions
 {
     public static class StartupExtensions
