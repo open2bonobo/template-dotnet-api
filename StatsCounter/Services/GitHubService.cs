@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using StatsCounter.Models;
+using System.Text.Json.Serialization;
+
 
 namespace StatsCounter.Services
 {
