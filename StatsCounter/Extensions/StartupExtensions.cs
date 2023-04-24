@@ -10,7 +10,7 @@ namespace StatsCounter.Extensions
             this IServiceCollection services,
             Uri baseApiUrl)
         {
-            services.AddService<IGitHubService>().AsTransient();
+            services.AsTransient<IGitHubService>();
             return services; // TODO: add your code here
         }
     }
