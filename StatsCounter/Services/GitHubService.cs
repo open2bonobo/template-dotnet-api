@@ -15,14 +15,24 @@ namespace StatsCounter.Services
     {
         private readonly HttpClient _httpClient;
 
-        public GitHubService(HttpClient httpClient)
+        public GitHubService(HttpClient httpClient, IGitHubService git)
         {
             _httpClient = httpClient;
         }
 
         public Task<IEnumerable<RepositoryInfo>> GetRepositoryInfosByOwnerAsync(string owner)
         {
-            throw new NotImplementedException(); // TODO: add your code here
+            using var httpClient = new HttpClient();
+httpClient.DefaultRequestHeaders.Add("User-Agent", "MyApp"); // Replace with your app name
+
+var owner = "open2bonobo";
+var repo = "docs";
+
+var response = await httpClient.GetAsync($"https://api.github.com/repos/{owner}/{repo}");
+var content = await response.Content.ReadAsStringAsync();
+            var output = JsonSerializer.Deserialize<List<RepositoryInfo>>(content);
+
+            return output; // TODO: add your code here
         }
     }
 }
