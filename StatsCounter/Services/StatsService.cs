@@ -20,8 +20,29 @@ namespace StatsCounter.Services
 
         public Task<RepositoryStats> GetRepositoryStatsByOwnerAsync(string owner)
         {
-            
+
             throw new NotImplementedException(); // TODO: add your code here
         }
+        private IDictionary<char, int> CountLetters(IEnumerable<RepositoryDto> repositories)
+{
+    var letters = new Dictionary<char, int>();
+
+    foreach (var repository in repositories)
+    {
+        foreach (var letter in repository.Name.ToLower().Where(char.IsLetter))
+        {
+            if (letters.ContainsKey(letter))
+            {
+                letters[letter]++;
+            }
+            else
+            {
+                letters[letter] = 1;
+            }
+        }
+    }
+
+    return letters;
+}
     }
 }
