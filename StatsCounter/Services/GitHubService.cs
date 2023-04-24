@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using StatsCounter.Models;
-using System.Text.Json.Serialization;
 
 
 namespace StatsCounter.Services
@@ -12,27 +12,25 @@ namespace StatsCounter.Services
     {
         Task<IEnumerable<RepositoryInfo>> GetRepositoryInfosByOwnerAsync(string owner);
     }
-    
+
     public class GitHubService : IGitHubService
     {
         private readonly HttpClient _httpClient;
+        private readonly Uri _baseApiUrl;
 
-        public GitHubService(HttpClient httpClient, IGitHubService git)
+        public GitHubService(HttpClient httpClient, Uri baseApiUrl)
         {
             _httpClient = httpClient;
+            _baseApiUrl = baseApiUrl;
         }
 
         public async Task<IEnumerable<RepositoryInfo>> GetRepositoryInfosByOwnerAsync(string owner)
         {
-            using var httpClient = new HttpClient();
-httpClient.DefaultRequestHeaders.Add("User-Agent", "MyApp"); 
+            _httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd(owner);
 
-var repo = "docs";
-
-var response = await httpClient.GetAsync($"https://api.github.com/repos/{owner}/{repo}");
-var content = await response.Content.ReadAsStringAsync();
-            var output = JsonSerializer.Deserialize<List<RepositoryInfo>>(content);
-
+            var response = await _httpClient.GetAsync($"{_baseApiUrl}users/{owner}/repos");
+            var content = await response.Content.ReadAsStringAsync();
+            var output = JsonSerializer.Deserialize<IEnumerable<RepositoryInfo>>(content);
             return output; // TODO: add your code here
         }
     }

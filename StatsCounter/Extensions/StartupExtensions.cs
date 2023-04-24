@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 using StatsCounter.Services;
 
@@ -10,7 +11,7 @@ namespace StatsCounter.Extensions
             this IServiceCollection services,
             Uri baseApiUrl)
         {
-            services.AddTransient<IGitHubService>();
+            services.AddTransient<IGitHubService, GitHubService>( sp => new GitHubService(new HttpClient(), baseApiUrl));
             return services; // TODO: add your code here
         }
     }

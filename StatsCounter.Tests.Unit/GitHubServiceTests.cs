@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Castle.Core.Configuration;
 using FluentAssertions;
 using Moq;
 using Moq.Protected;
@@ -22,11 +23,9 @@ namespace StatsCounter.Tests.Unit
         public GitHubServiceTests()
         {
             _httpMessageHandler = new Mock<HttpMessageHandler>();
-            _gitHubService = new GitHubService(
-                new HttpClient(_httpMessageHandler.Object)
-                {
-                    BaseAddress = new Uri("http://localhost")
-                });
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("open2bonobo");
+            _gitHubService = new GitHubService(httpClient, new Uri("https://api.github.com/"));
         }
         
         [Fact]
@@ -44,9 +43,11 @@ namespace StatsCounter.Tests.Unit
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("[{\"id\":1,\"name\":\"name\",\"stargazers_count\":2,\"watchers_count\":3,\"forks_count\":4,\"size\":5}]")
                 });
-            
+            var httpClient = new HttpClient(_httpMessageHandler.Object);
+
             // when
-            var result = await _gitHubService.GetRepositoryInfosByOwnerAsync("owner");
+            var result = await new GitHubService(httpClient, new Uri("https://api.github.com/"))
+                .GetRepositoryInfosByOwnerAsync("owner");
             
             // then
             result.Should().BeEquivalentTo(
