@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Text;
 
 namespace StatsCounter.Services
 {
@@ -24,48 +25,57 @@ namespace StatsCounter.Services
 
         public async Task<RepositoryStats> GetRepositoryStatsByOwnerAsync(string owner)
         {
+            if (string.IsNullOrWhiteSpace(owner))
+            {
+                throw new ArgumentException("Owner cannot be null or empty.", nameof(owner));
+            }
 
-            var data = await _gitHubService.GetRepositoryInfosByOwnerAsync(owner);
+            var repositoryInfos = await _gitHubService.GetRepositoryInfosByOwnerAsync(owner);
+            var repositories = repositoryInfos.ToList();
 
-            var repo = data.ToList();
-            var repositoryStats = new RepositoryStats()
+            if (repositories.Count == 0)
+            {
+                return new RepositoryStats
+                {
+                    Owner = owner,
+                    Letters = new Dictionary<char, int>(),
+                    AvgStargazers = 0,
+                    AvgWatchers = 0,
+                    AvgForks = 0,
+                    AvgSize = 0
+                };
+            }
+
+            var names = new StringBuilder();
+            var repositoryStats = new RepositoryStats
             {
                 Owner = owner,
                 Letters = new Dictionary<char, int>(),
-                AvgStargazers = 0,
-                AvgWatchers = 0,
-                AvgForks = 0,
-                AvgSize = 0
+                AvgStargazers = repositories.Average(r => r.StargazersCount),
+                AvgWatchers = repositories.Average(r => r.WatchersCount),
+                AvgForks = repositories.Average(r => r.ForksCount),
+                AvgSize = repositories.Average(r => r.Size)
             };
-            string names = String.Empty;
-            for (int i = 0; i < repo.Count; i++)
+
+            foreach (var repo in repositories)
             {
-                names += repo[i].Name.Replace(" ", "").Trim();
-                //repositoryStats.Id = repo[i].Id;
-                repositoryStats.AvgStargazers += repo[i].StargazersCount;
-                repositoryStats.AvgWatchers += repo[i].WatchersCount;
-                repositoryStats.AvgForks += repo[i].ForksCount;
-                repositoryStats.AvgSize += repo[i].Size;
+                names.Append(repo.Name.Replace(" ", "").Trim());
             }
-            repositoryStats.Letters = CountLetters(names);
-            repositoryStats.AvgStargazers /= repo.Count;
-            repositoryStats.AvgWatchers /= repo.Count;
-            repositoryStats.AvgForks /= repo.Count;
-            repositoryStats.AvgSize /= repo.Count;
 
-
+            repositoryStats.Letters = CalculateLetterFrequencies(names.ToString());
 
             return repositoryStats;
         }
-        private Dictionary<char, int> CountLetters(string str)
-        {
-            Dictionary<char, int> frequencies = new Dictionary<char, int>();
 
-            foreach (char c in str)
+        private Dictionary<char, int> CalculateLetterFrequencies(string str)
+        {
+            var frequencies = new Dictionary<char, int>();
+
+            foreach (var c in str)
             {
                 if (char.IsLetter(c))
                 {
-                    char letter = char.ToLower(c);
+                    var letter = char.ToLower(c);
                     if (frequencies.ContainsKey(letter))
                     {
                         frequencies[letter]++;
@@ -79,6 +89,7 @@ namespace StatsCounter.Services
 
             return frequencies;
         }
+
 
     }
 }
